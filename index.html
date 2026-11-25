@@ -137,7 +137,7 @@ select{font:16px "Nunito Sans",Arial;padding:9px 11px;border-radius:10px;border:
    Cole aqui a URL do App da Web do Google Apps Script (termina em /exec). */
 const API_URL = 'https://script.google.com/macros/s/AKfycbw6nidJnqxfZS9RCSI6qp_H2SVFfPBRHtHFtSZSEgE30U_jGCAbANWa8KDfwX43LCJtlg/exec';
 /* Dados iniciais (relatório de 25/11/2026). Depois disso, os números vêm da planilha. */
-const INICIAL = {"data": "25/11/2026", "atualizado": "25/11/2026 · relatório de filiação 14:30 (Brasília)", "du": 4, "du_list": [25, 26, 27, 30], "meta_unid_dia": 43, "canais": {"WEB SITE - CARTAO DE TODOS": 2, "LIA - GT7": 1, "CSC CAMPO GRANDE": 3}, "vendedores": [{"nome": "Janderson", "completo": "Janderson Patrick Silva de Souza", "ferias": false, "cor": "#007A5A", "mq2": 50, "q2": 46, "hoje": 3, "vendas": [{"h": "08:38", "tipo": "Filiação", "pg": "Mastercard"}, {"h": "10:49", "tipo": "Filiação", "pg": "Visa"}, {"h": "14:30", "tipo": "Filiação", "pg": "Energisa"}], "refu_mes": 7, "mes": 97}, {"nome": "Jéssica Thalia", "completo": "Jessica Thalia da Silva Posca", "ferias": false, "cor": "#0E7C86", "mq2": 36, "q2": 27, "hoje": 2, "vendas": [{"h": "09:09", "tipo": "Refiliação", "pg": "Mastercard"}, {"h": "11:26", "tipo": "Filiação", "pg": "Mastercard"}], "refu_mes": 7, "mes": 63}, {"nome": "Daniele", "completo": "Daniele Fernandes Anunciação", "ferias": false, "cor": "#C8972B", "mq2": 36, "q2": 23, "hoje": 1, "vendas": [{"h": "13:51", "tipo": "Refiliação", "pg": "Mastercard"}], "refu_mes": 7, "mes": 42}, {"nome": "Leandro", "completo": "Leandro Vinicius Gomes dos Reis", "ferias": false, "cor": "#8E44AD", "mq2": 50, "q2": 25, "hoje": 4, "vendas": [{"h": "10:18", "tipo": "Filiação", "pg": "Mastercard"}, {"h": "11:07", "tipo": "Filiação", "pg": "Energisa"}, {"h": "13:03", "tipo": "Filiação", "pg": "Energisa"}, {"h": "13:06", "tipo": "Filiação", "pg": "Visa"}], "refu_mes": 7, "mes": 41}, {"nome": "Polyana", "completo": "Polyana Candido de Araujo", "ferias": false, "cor": "#D35400", "mq2": 36, "q2": 19, "hoje": 2, "vendas": [{"h": "09:14", "tipo": "Filiação", "pg": "Visa"}, {"h": "12:19", "tipo": "Filiação", "pg": "Energisa"}], "refu_mes": 4, "mes": 30}, {"nome": "Pedro Henrique", "completo": "Pedro Henrique Alves Ribeiro", "ferias": false, "cor": "#2C6FBB", "mq2": 25, "q2": 13, "hoje": 3, "vendas": [{"h": "10:59", "tipo": "Filiação", "pg": "Mastercard"}, {"h": "11:34", "tipo": "Filiação", "pg": "Mastercard"}, {"h": "14:23", "tipo": "Filiação", "pg": "Mastercard"}], "refu_mes": 2, "mes": 13}, {"nome": "Mathias", "completo": "Mathias do Amaral Castilho", "ferias": false, "cor": "#16A085", "mq2": 25, "q2": 14, "hoje": 3, "vendas": [{"h": "10:51", "tipo": "Filiação", "pg": "Visa"}, {"h": "11:51", "tipo": "Filiação", "pg": "Mastercard"}, {"h": "12:12", "tipo": "Filiação", "pg": "Elo"}], "refu_mes": 0, "mes": 14}, {"nome": "Keisy", "completo": "Keisy Ferreira Marques", "ferias": false, "cor": "#C0392B", "mq2": 25, "q2": 6, "hoje": 2, "vendas": [{"h": "11:49", "tipo": "Refiliação", "pg": "Mastercard"}, {"h": "12:55", "tipo": "Refiliação", "pg": "Mastercard"}], "refu_mes": 0, "mes": 6}, {"nome": "Joyce", "completo": "Joyce de Anunciação de Souza", "ferias": true, "cor": "#5E6F68", "mq2": 36, "q2": 0, "hoje": 0, "vendas": [], "refu_mes": 3, "mes": 41}], "outros_refu": [{"nome": "Rodolfo Rodrigues Malta", "refu_mes": 1, "refu_q2": 0}], "refu": {"meta": 70, "real": 38, "ate": "24/11"}, "tim": {"meta": 40, "real": 26}, "ms": 1795627858103};
+const INICIAL = {"data": "25/11/2026", "atualizado": "25/11/2026 · relatório de filiação 14:30 (Brasília)", "du": 4, "du_list": [3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 23, 24, 25, 26, 27, 30], "meta_unid_dia": 43, "canais": {"WEB SITE - CARTAO DE TODOS": 2, "LIA - GT7": 1, "CSC CAMPO GRANDE": 3}, "vendedores": [{"nome": "Janderson", "completo": "Janderson Patrick Silva de Souza", "ferias": false, "cor": "#007A5A", "mq2": 50, "q2": 46, "hoje": 3, "vendas": [{"h": "08:38", "tipo": "Filiação", "pg": "Mastercard"}, {"h": "10:49", "tipo": "Filiação", "pg": "Visa"}, {"h": "14:30", "tipo": "Filiação", "pg": "Energisa"}], "refu_mes": 7, "mes": 97}, {"nome": "Jéssica Thalia", "completo": "Jessica Thalia da Silva Posca", "ferias": false, "cor": "#0E7C86", "mq2": 36, "q2": 27, "hoje": 2, "vendas": [{"h": "09:09", "tipo": "Refiliação", "pg": "Mastercard"}, {"h": "11:26", "tipo": "Filiação", "pg": "Mastercard"}], "refu_mes": 7, "mes": 63}, {"nome": "Daniele", "completo": "Daniele Fernandes Anunciação", "ferias": false, "cor": "#C8972B", "mq2": 36, "q2": 23, "hoje": 1, "vendas": [{"h": "13:51", "tipo": "Refiliação", "pg": "Mastercard"}], "refu_mes": 7, "mes": 42}, {"nome": "Leandro", "completo": "Leandro Vinicius Gomes dos Reis", "ferias": false, "cor": "#8E44AD", "mq2": 50, "q2": 25, "hoje": 4, "vendas": [{"h": "10:18", "tipo": "Filiação", "pg": "Mastercard"}, {"h": "11:07", "tipo": "Filiação", "pg": "Energisa"}, {"h": "13:03", "tipo": "Filiação", "pg": "Energisa"}, {"h": "13:06", "tipo": "Filiação", "pg": "Visa"}], "refu_mes": 7, "mes": 41}, {"nome": "Polyana", "completo": "Polyana Candido de Araujo", "ferias": false, "cor": "#D35400", "mq2": 36, "q2": 19, "hoje": 2, "vendas": [{"h": "09:14", "tipo": "Filiação", "pg": "Visa"}, {"h": "12:19", "tipo": "Filiação", "pg": "Energisa"}], "refu_mes": 4, "mes": 30}, {"nome": "Pedro Henrique", "completo": "Pedro Henrique Alves Ribeiro", "ferias": false, "cor": "#2C6FBB", "mq2": 25, "q2": 13, "hoje": 3, "vendas": [{"h": "10:59", "tipo": "Filiação", "pg": "Mastercard"}, {"h": "11:34", "tipo": "Filiação", "pg": "Mastercard"}, {"h": "14:23", "tipo": "Filiação", "pg": "Mastercard"}], "refu_mes": 2, "mes": 13}, {"nome": "Mathias", "completo": "Mathias do Amaral Castilho", "ferias": false, "cor": "#16A085", "mq2": 25, "q2": 14, "hoje": 3, "vendas": [{"h": "10:51", "tipo": "Filiação", "pg": "Visa"}, {"h": "11:51", "tipo": "Filiação", "pg": "Mastercard"}, {"h": "12:12", "tipo": "Filiação", "pg": "Elo"}], "refu_mes": 0, "mes": 14}, {"nome": "Keisy", "completo": "Keisy Ferreira Marques", "ferias": false, "cor": "#C0392B", "mq2": 25, "q2": 6, "hoje": 2, "vendas": [{"h": "11:49", "tipo": "Refiliação", "pg": "Mastercard"}, {"h": "12:55", "tipo": "Refiliação", "pg": "Mastercard"}], "refu_mes": 0, "mes": 6}, {"nome": "Joyce", "completo": "Joyce de Anunciação de Souza", "ferias": true, "cor": "#5E6F68", "mq2": 36, "q2": 0, "hoje": 0, "vendas": [], "refu_mes": 3, "mes": 41}], "outros_refu": [{"nome": "Rodolfo Rodrigues Malta", "refu_mes": 1, "refu_q2": 0}], "refu": {"meta": 70, "real": 38, "ate": "24/11"}, "tim": {"meta": 40, "real": 26}, "ms": 1795627858103, "du_mes": "2026-11"};
 /* ===================================== */
 {
 const $=s=>document.querySelector(s);
@@ -159,23 +159,31 @@ let BASE=INICIAL, LANC=[], online=false, carregadoEm=Date.now(), filtro='todos',
 if(!API_URL){ try{LANC=JSON.parse(LS.get('cdt_demo')||'[]')}catch{LANC=[]} }
 
 /* ---------- cálculo: base da gestão + registros dos vendedores ---------- */
+function diasUteis(){
+  const h=new Date(), y=h.getFullYear(), m=h.getMonth(), mes=`${y}-${pad(m+1)}`;
+  if(BASE.du_mes===mes&&Array.isArray(BASE.du_list)) return BASE.du_list;
+  const fer=BASE.feriados_mes===mes?(BASE.feriados||[]):[], fim=new Date(y,m+1,0).getDate(), out=[];
+  for(let d=1;d<=fim;d++){const w=new Date(y,m,d).getDay();if(w>0&&w<6&&!fer.includes(d))out.push(d)}
+  return out;
+}
 let S;
 function derive(){
   const hoje=isoOf(Date.now()), diaHoje=new Date().getDate();
-  const baseDia=isoBR(BASE.data), mesHoje=hoje.slice(0,7);
+  const baseDia=isoBR(BASE.data), mesHoje=hoje.slice(0,7), qz=iso=>iso.slice(0,7)+(+iso.slice(8)>=16?'b':'a');
+  const mesmoMes=baseDia.slice(0,7)===mesHoje, mesmaQz=qz(baseDia)===qz(hoje);
   const novos=LANC.filter(l=>l.ms>cut(l.tipo));
   const doMes=novos.filter(l=>isoOf(l.ms).slice(0,7)===mesHoje);
-  const DU=Math.max(1,(BASE.du_list||[]).filter(x=>x>=diaHoje).length||1);
+  const DU=Math.max(1,diasUteis().filter(x=>x>=diaHoje).length||1);
   const V=BASE.vendedores.map(v=>{
     const meus=novos.filter(l=>l.v===v.nome);
     const cdtHoje=meus.filter(l=>l.tipo==='cdt'&&isoOf(l.ms)===hoje).length;
-    const cdtAntes=meus.filter(l=>l.tipo==='cdt'&&isoOf(l.ms)!==hoje&&isoOf(l.ms)>=baseDia&&new Date(l.ms).getDate()>=16).length;
+    const cdtAntes=meus.filter(l=>l.tipo==='cdt'&&isoOf(l.ms)!==hoje&&qz(isoOf(l.ms))===qz(hoje)).length;
     const hojeN=(baseDia===hoje?v.hoje:0)+cdtHoje;
-    const q2=v.q2+(baseDia===hoje?0:v.hoje)+cdtAntes;
+    const q2=(mesmaQz?v.q2+(baseDia===hoje?0:v.hoje):0)+cdtAntes;
     const meta=v.ferias?0:Math.ceil(Math.max(0,v.mq2-q2)/DU);
     const todosMes=LANC.filter(l=>l.v===v.nome&&isoOf(l.ms).slice(0,7)===mesHoje);
     return {...v,hoje:hojeN,q2,meta_hoje:meta,falta:Math.max(0,meta-hojeN),
-      refu_mes:v.refu_mes+doMes.filter(l=>l.v===v.nome&&l.tipo==='refu').length,
+      refu_mes:(mesmoMes?v.refu_mes:0)+doMes.filter(l=>l.v===v.nome&&l.tipo==='refu').length,
       tim_reg:todosMes.filter(l=>l.tipo==='tim').length,refu_reg:todosMes.filter(l=>l.tipo==='refu').length,
       regHoje:LANC.filter(l=>l.v===v.nome&&isoOf(l.ms)===hoje).sort((a,b)=>b.ms-a.ms),
       vendas:baseDia===hoje?(v.vendas||[]):[]};
@@ -184,8 +192,8 @@ function derive(){
   const canaisObj=baseDia===hoje?BASE.canais:Object.fromEntries(Object.keys(BASE.canais).map(k=>[k,0]));
   const canais=Object.values(canaisObj).reduce((a,b)=>a+(+b||0),0);
   const vend=V.reduce((a,v)=>a+v.hoje,0),total=vend+canais;
-  const tim={meta:BASE.tim.meta,real:BASE.tim.real+doMes.filter(l=>l.tipo==='tim').length};
-  const refu={meta:BASE.refu.meta,real:BASE.refu.real+doMes.filter(l=>l.tipo==='refu').length};
+  const tim={meta:BASE.tim.meta,real:(mesmoMes?BASE.tim.real:0)+doMes.filter(l=>l.tipo==='tim').length};
+  const refu={meta:BASE.refu.meta,real:(mesmoMes?BASE.refu.real:0)+doMes.filter(l=>l.tipo==='refu').length};
   for(const g of [tim,refu]){g.falta=Math.max(0,g.meta-g.real);g.cota=Math.ceil(g.falta/Math.max(1,A.length))}
   const rank=[...A].sort((a,b)=>b.hoje-a.hoje||(b.hoje/(b.meta_hoje||1))-(a.hoje/(a.meta_hoje||1))||a.nome.localeCompare(b.nome)).map(v=>v.nome);
   S={hoje,V,A,DU,canaisObj,canais,vend,total,meta:BASE.meta_unid_dia,falta:Math.max(0,BASE.meta_unid_dia-total),
@@ -287,7 +295,7 @@ async function registrar(tipo){
   const antes=derive(), vA=antes.V.find(v=>v.nome===nome);
   ocupado=true; document.querySelectorAll('.act').forEach(b=>b.disabled=true);
   try{
-    if(API_URL){ aplicar(await api({acao:'lancar',tipo,alvo:nome,v:SES.v,pin:SES.pin})) }
+    if(API_URL){ aplicar(await api({acao:'lancar',tipo,alvo:nome,v:SES.v,pin:SES.pin})); guardarHistorico() }
     else { LANC.push({id:'d'+Date.now(),ms:Date.now(),v:nome,tipo,por:ehG()?'gestão':nome,st:ehG()?'validado':'pendente'}); LS.set('cdt_demo',JSON.stringify(LANC)); render() }
     const depois=derive(), vD=depois.V.find(v=>v.nome===nome);
     if(tipo==='cdt'&&vA.meta_hoje&&vA.falta>0&&vD.falta===0){boom();toast(`${nome} bateu a meta do dia!`,true)}
@@ -298,7 +306,7 @@ async function registrar(tipo){
 }
 async function desfazer(id){
   try{
-    if(API_URL) aplicar(await api({acao:'desfazer',id,v:SES&&SES.v,pin:SES&&SES.pin}));
+    if(API_URL){ aplicar(await api({acao:'desfazer',id,v:SES&&SES.v,pin:SES&&SES.pin})); guardarHistorico() }
     else { LANC=LANC.filter(l=>l.id!==id); LS.set('cdt_demo',JSON.stringify(LANC)); render() }
     toast('Registro desfeito');
   }catch(e){ toast('Não foi possível desfazer: '+e.message) }
@@ -355,9 +363,10 @@ function gConf(){
   <p class="note">Recusar remove o registro da contagem (fica guardado na planilha como "recusado").</p>`;
 }
 function gRes(){
-  return `<div class="gg"><label class="fl">Meta da unidade (dia)<input type="number" min="0" id="g_meta" value="${S.meta}"></label></div>
+  return `<div class="gg"><label class="fl">Meta da unidade (dia)<input type="number" min="0" id="g_meta" value="${S.meta}"></label>
+      <label class="fl" style="grid-column:span 2">Dias úteis do mês <small>separados por vírgula</small><input type="text" id="g_du" value="${diasUteis().join(', ')}"></label></div>
     <h4>Cartão de TODOS · vendas de hoje</h4>
-    <div class="gg">${S.V.map((v,i)=>`<label class="fl">${esc(v.nome)} <small>quinzena ${v.q2}/${v.mq2}</small><input type="number" min="0" id="g_v${i}" value="${v.hoje}" ${v.ferias?'disabled':''}><span class="sv"><input type="checkbox" id="g_f${i}" ${v.ferias?'checked':''}> de férias</span></label>`).join('')}
+    <div class="gg">${S.V.map((v,i)=>`<label class="fl">${esc(v.nome)} <small>vendas hoje · quinzena ${v.q2}/${v.mq2}</small><input type="number" min="0" id="g_v${i}" value="${v.hoje}" ${v.ferias?'disabled':''}><small>meta da quinzena</small><input type="number" min="0" id="g_q${i}" value="${v.mq2}"><span class="sv"><input type="checkbox" id="g_f${i}" ${v.ferias?'checked':''}> de férias</span></label>`).join('')}
       ${Object.keys(S.canaisObj).map((k,i)=>`<label class="fl">${esc(k)} <small>canal</small><input type="number" min="0" id="g_c${i}" value="${S.canaisObj[k]}"></label>`).join('')}</div>
     <h4>Metas coletivas do mês</h4>
     <div class="gg"><label class="fl">TIM realizado<input type="number" min="0" id="g_tim" value="${S.tim.real}"></label>
@@ -385,14 +394,15 @@ async function salvarBase(nb,msgId,okTxt){
   const msg=$('#'+msgId); msg.style.color='var(--ink)'; msg.textContent='Salvando…';
   const h=new Date(); nb.atualizado=`${h.toLocaleDateString('pt-BR')} às ${h.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})} (gestão)`;
   try{
-    if(API_URL) aplicar(await api({acao:'base',base:nb,pin:SES.pin})); else { BASE=nb; render() }
+    if(API_URL){ aplicar(await api({acao:'base',base:nb,pin:SES.pin})); guardarHistorico() } else { BASE=nb; render() }
     gRender(); const m=$('#'+msgId); if(m){m.style.color='var(--teal9)';m.textContent=okTxt}
   }catch(e){ msg.style.color='var(--red)'; msg.textContent='Não salvou: '+(e.message||'sem conexão') }
 }
 function salvarGestao(){
   const nb=JSON.parse(JSON.stringify(BASE)), hoje=new Date();
   nb.data=hoje.toLocaleDateString('pt-BR'); nb.ms=nb.ms_cdt=nb.ms_tim=nb.ms_refu=gSnap; nb.meta_unid_dia=num('g_meta');
-  nb.vendedores=nb.vendedores.map((v,i)=>{const e=S.V[i],h=num('g_v'+i);return {...v,hoje:h,q2:e.q2,refu_mes:e.refu_mes,ferias:$('#g_f'+i).checked,vendas:h===e.hoje?e.vendas:[]}});
+  const du=String($('#g_du').value).split(/[^0-9]+/).map(Number).filter(n=>n>=1&&n<=31); if(du.length){nb.du_list=[...new Set(du)].sort((a,b)=>a-b); nb.du_mes=S.hoje.slice(0,7)}
+  nb.vendedores=nb.vendedores.map((v,i)=>{const e=S.V[i],h=num('g_v'+i);return {...v,hoje:h,q2:e.q2,mq2:num('g_q'+i),refu_mes:e.refu_mes,ferias:$('#g_f'+i).checked,vendas:h===e.hoje?e.vendas:[]}});
   nb.canais=Object.fromEntries(Object.keys(S.canaisObj).map((k,i)=>[k,num('g_c'+i)]));
   nb.tim={...nb.tim,real:num('g_tim'),meta:num('g_timm')}; nb.refu={...nb.refu,real:num('g_refu'),meta:num('g_refum')};
   salvarBase(nb,'g_msg','Salvo! Todos já veem os novos números.');
@@ -459,16 +469,17 @@ function aplicarImp(){
   if(!IMP) return; const nb=JSON.parse(JSON.stringify(BASE)), I=IMP;
   if(I.tipo==='cdt'){
     nb.data=new Date().toLocaleDateString('pt-BR'); nb.ms_cdt=I.ate; nb.ms_tim=cut('tim'); nb.ms_refu=cut('refu');
-    nb.vendedores=nb.vendedores.map((v,i)=>({...v,hoje:I.por[v.nome]||0,q2:S.V[i].q2,refu_mes:S.V[i].refu_mes,vendas:I.vendas[v.nome]||[]}));
+    nb.vendedores=nb.vendedores.map((v,i)=>({...v,hoje:I.por[v.nome]||0,q2:S.V[i].q2,refu_mes:S.V[i].refu_mes,vendas:I.vendas[v.nome]||[]})); nb.tim_mes_ok=1;
     nb.canais=I.canais; nb.refu.real=S.refu.real; nb.tim.real=S.tim.real; nb.ms_tim=nb.ms_refu=Date.now();
   } else {
     nb.ms_refu=I.ate; nb.ms_cdt=cut('cdt'); nb.ms_tim=cut('tim');
+    nb.data=new Date().toLocaleDateString('pt-BR'); nb.vendedores=nb.vendedores.map((v,i)=>({...v,hoje:S.V[i].hoje,q2:S.V[i].q2,vendas:S.V[i].vendas})); nb.canais={...S.canaisObj}; nb.tim.real=S.tim.real; nb.ms_cdt=nb.ms_tim=Date.now();
     nb.refu.real=I.total; nb.vendedores=nb.vendedores.map(v=>({...v,refu_mes:I.por[v.nome]||0}));
   }
   IMP=null; salvarBase(nb,'i_msg','Relatório aplicado como número oficial para todos.');
 }
 async function conferir(acao,id){
-  try{ if(API_URL) aplicar(await api({acao,id,pin:SES.pin})); else { if(acao==='recusar')LANC=LANC.filter(l=>l.id!==id); else LANC=LANC.map(l=>l.id===id?{...l,st:'validado'}:l); LS.set('cdt_demo',JSON.stringify(LANC)); render() } gRender() }
+  try{ if(API_URL){ aplicar(await api({acao,id,pin:SES.pin})); if(acao==='recusar')guardarHistorico() } else { if(acao==='recusar')LANC=LANC.filter(l=>l.id!==id); else LANC=LANC.map(l=>l.id===id?{...l,st:'validado'}:l); LS.set('cdt_demo',JSON.stringify(LANC)); render() } gRender() }
   catch(e){ toast('Não foi possível: '+e.message) }
 }
 async function validarTodos(){
@@ -480,6 +491,12 @@ async function validarTodos(){
 
 /* ---------- sincronização ---------- */
 function aplicar(j){ if(j.base&&j.base.vendedores) BASE=j.base; LANC=j.lanc||[]; online=true; render() }
+function snapshot(){
+  derive();
+  return {data:S.hoje, unidade:{total:S.total,meta:S.meta,canais:S.canais,tim:S.tim.real,tim_meta:S.tim.meta,refu:S.refu.real,refu_meta:S.refu.meta},
+    vendedores:S.V.filter(v=>!v.ferias||v.hoje).map(v=>({v:v.nome,cdt:v.hoje,meta:v.meta_hoje,tim:v.regHoje.filter(l=>l.tipo==='tim').length,refu:v.regHoje.filter(l=>l.tipo==='refu').length,pos:S.rank.indexOf(v.nome)+1,quinzena:v.q2,meta_quinzena:v.mq2}))};
+}
+function guardarHistorico(){ if(!API_URL||!SES) return; fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({acao:'historico',v:SES.v,pin:SES.pin,snap:snapshot()})}).catch(()=>{}) }
 async function atualizar(){
   if(!API_URL||ocupado||$('#gdlg').open) return;
   try{ const r=await fetch(API_URL+'?t='+Date.now(),{cache:'no-store'}); aplicar(await r.json()) }
