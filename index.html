@@ -180,9 +180,10 @@ function derive(){
     const cdtAntes=meus.filter(l=>l.tipo==='cdt'&&isoOf(l.ms)!==hoje&&qz(isoOf(l.ms))===qz(hoje)).length;
     const hojeN=(baseDia===hoje?v.hoje:0)+cdtHoje;
     const q2=(mesmaQz?v.q2+(baseDia===hoje?0:v.hoje):0)+cdtAntes;
+    const mesAnt=mesmoMes&&v.mes_ant!=null?v.mes_ant+(baseDia===hoje?0:v.hoje):null;
     const meta=v.ferias?0:Math.ceil(Math.max(0,v.mq2-q2)/DU);
     const todosMes=LANC.filter(l=>l.v===v.nome&&isoOf(l.ms).slice(0,7)===mesHoje);
-    return {...v,hoje:hojeN,q2,meta_hoje:meta,falta:Math.max(0,meta-hojeN),
+    return {...v,hoje:hojeN,q2,mes_v:mesAnt==null?null:mesAnt+hojeN,meta_hoje:meta,falta:Math.max(0,meta-hojeN),
       refu_mes:(mesmoMes?v.refu_mes:0)+doMes.filter(l=>l.v===v.nome&&l.tipo==='refu').length,
       tim_reg:todosMes.filter(l=>l.tipo==='tim').length,refu_reg:todosMes.filter(l=>l.tipo==='refu').length,
       regHoje:[],
@@ -195,22 +196,28 @@ function derive(){
   const tim={meta:BASE.tim.meta,real:(mesmoMes?BASE.tim.real:0)+doMes.filter(l=>l.tipo==='tim').length};
   const refu={meta:BASE.refu.meta,real:(mesmoMes?BASE.refu.real:0)+doMes.filter(l=>l.tipo==='refu').length};
   for(const g of [tim,refu]){g.falta=Math.max(0,g.meta-g.real);g.cota=Math.ceil(g.falta/Math.max(1,A.length))}
+  const canaisOntem=Object.values(BASE.canais||{}).reduce((a,b)=>a+(+b||0),0), totOntem=BASE.vendedores.reduce((a,v)=>a+(v.hoje||0),0)+canaisOntem;
+  const mesAnt=mesmoMes&&BASE.mes_ate_ontem!=null?BASE.mes_ate_ontem+(baseDia===hoje?0:totOntem):null;
+  const duList=diasUteis(), duPass=duList.filter(x=>x<diaHoje).length;
+  const mes={meta:+BASE.meta_mes||700, ant:mesAnt, real:mesAnt==null?null:mesAnt+vend+canais};
+  if(mes.real!=null){ mes.falta=Math.max(0,mes.meta-mes.real); mes.faltaHoje=Math.max(0,mes.meta-mesAnt); mes.precisaHoje=Math.ceil(mes.faltaHoje/DU);
+    mes.ritmo=duPass?mesAnt/duPass:0; mes.proj=Math.round(mesAnt+mes.ritmo*DU); }
   const rank=[...A].sort((a,b)=>b.hoje-a.hoje||(b.hoje/(b.meta_hoje||1))-(a.hoje/(a.meta_hoje||1))||a.nome.localeCompare(b.nome)).map(v=>v.nome);
   S={hoje,V,A,DU,canaisObj,canais,vend,total,meta:BASE.meta_unid_dia,falta:Math.max(0,BASE.meta_unid_dia-total),
-     somaMetas:A.reduce((a,v)=>a+v.meta_hoje,0),tim,refu,rank};
+     somaMetas:A.reduce((a,v)=>a+v.meta_hoje,0),tim,refu,rank,mes,duPass};
   return S;
 }
 
 /* ---------- telas ---------- */
 function kpi(t,v,m,cor,sub,go){return `<button class="kpi" data-go="${go}"><span class="t">${t}</span><span class="v">${v} <small>/ ${m}</small></span><span class="s"><i style="width:${pct(v,m)}%;background:${cor}"></i></span><em>${sub}</em></button>`}
 function card(v){
-  const done=v.meta_hoje>0&&v.hoje>=v.meta_hoje, pos=S.rank.indexOf(v.nome)+1, eu=SES&&SES.v===v.nome;
+  const qzOk=v.meta_hoje===0&&v.q2>=v.mq2, done=(v.meta_hoje>0&&v.hoje>=v.meta_hoje)||qzOk, pos=S.rank.indexOf(v.nome)+1, eu=SES&&SES.v===v.nome;
   return `<button class="seller ${done?'done':''}" style="${eu?'outline:3px solid var(--lime2);outline-offset:2px':''}" data-s="${esc(v.nome)}">
   <span class="pos">${pos}º</span>
   <div class="sl"><span class="av" style="background:${v.cor}">${esc(ini(v.nome))}</span><div><div class="nm">${esc(v.nome)}</div><div class="sub">meta de hoje: ${v.meta_hoje}</div></div></div>
   <div class="big"><b>${v.hoje}</b><span>/ ${v.meta_hoje} hoje · ${P(v.hoje,v.meta_hoje)}</span></div>
   <div class="bar"><i style="width:${pct(v.hoje,v.meta_hoje)}%;background:${done?'var(--lime2)':v.cor}"></i></div>
-  <div class="need" style="color:${done?'var(--teal9)':v.falta>=3?'var(--red)':'var(--ink)'}">${done?`Meta do dia batida${v.hoje>v.meta_hoje?` · +${v.hoje-v.meta_hoje} além`:''}`:`${pl(v.falta,'Falta','Faltam')} ${v.falta} ${pl(v.falta,'venda','vendas')} hoje`}</div>
+  <div class="need" style="color:${done?'var(--teal9)':v.falta>=3?'var(--red)':'var(--ink)'}">${done?(qzOk?`Quinzena batida${v.hoje?` · +${v.hoje} hoje`:''}`:`Meta do dia batida${v.hoje>v.meta_hoje?` · +${v.hoje-v.meta_hoje} além`:''}`):`${pl(v.falta,'Falta','Faltam')} ${v.falta} ${pl(v.falta,'venda','vendas')} hoje`}</div>
   <div class="contrib"><div class="c-r">Refuturiza no mês<b>${v.refu_mes}</b>sua parte do saldo: ${S.refu.cota}</div><div class="c-t">TIM Controle<b>${S.tim.cota}</b>sua parte do saldo</div></div>
   </button>`;
 }
@@ -226,6 +233,7 @@ function render(){
   const top=S.rank.slice(0,3).map((n,i)=>{const v=A.find(x=>x.nome===n);return `${i+1}º ${esc(n)} (${v.hoje})`}).join(' · ');
   $('#app').innerHTML=`${API_URL?'':'<div class="banner">Modo demonstração: os registros ficam só neste aparelho. Para sincronizar entre todos, configure a planilha (veja o LEIA-ME).</div>'}
   ${meu()}
+  ${cardMes()}
   <section class="board" id="dia"><div class="brow"><div>
     <div class="k">Cartão de TODOS · meta do dia · ${new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'})}</div>
     <div class="score"><b>${S.total}</b><span>de ${S.meta} vendas</span></div>
@@ -255,12 +263,29 @@ function render(){
   </div>
 
   <div class="panel"><h2 class="R" style="font-size:20px;margin:0 0 6px">Resumo por vendedor</h2>
-  <div style="overflow-x:auto"><table><thead><tr><th>#</th><th>Vendedor</th><th class="n">Hoje</th><th class="n">Meta dia</th><th class="n">Falta dia</th><th class="n">Quinzena</th><th class="n">Refuturiza mês</th></tr></thead><tbody>
-  ${[...A].sort((a,b)=>S.rank.indexOf(a.nome)-S.rank.indexOf(b.nome)).map(v=>`<tr class="clk" data-s="${esc(v.nome)}"><td>${S.rank.indexOf(v.nome)+1}º</td><td><b>${esc(v.nome)}</b></td><td class="n">${v.hoje}</td><td class="n">${v.meta_hoje}</td><td class="n" style="color:${v.falta?'var(--red)':'var(--teal9)'};font-weight:800">${v.falta||'✓'}</td><td class="n">${v.q2} / ${v.mq2}</td><td class="n">${v.refu_mes}</td></tr>`).join('')}
-  <tr><td></td><td><b>Unidade</b></td><td class="n"><b>${S.vend}</b> + ${S.canais} canais</td><td class="n">${S.somaMetas}</td><td class="n"><b>${A.reduce((a,v)=>a+v.falta,0)}</b></td><td></td><td class="n">${S.refu.real}</td></tr>
+  <div style="overflow-x:auto"><table><thead><tr><th>#</th><th>Vendedor</th><th class="n">Hoje</th><th class="n">Meta dia</th><th class="n">Falta dia</th><th class="n">Quinzena</th><th class="n">Mês</th><th class="n">Refuturiza mês</th></tr></thead><tbody>
+  ${[...A].sort((a,b)=>S.rank.indexOf(a.nome)-S.rank.indexOf(b.nome)).map(v=>`<tr class="clk" data-s="${esc(v.nome)}"><td>${S.rank.indexOf(v.nome)+1}º</td><td><b>${esc(v.nome)}</b></td><td class="n">${v.hoje}</td><td class="n">${v.meta_hoje}</td><td class="n" style="color:${v.falta?'var(--red)':'var(--teal9)'};font-weight:800">${v.falta||'✓'}</td><td class="n">${v.q2} / ${v.mq2}</td><td class="n">${v.mes_v??'—'}</td><td class="n">${v.refu_mes}</td></tr>`).join('')}
+  <tr><td></td><td><b>Unidade</b></td><td class="n"><b>${S.vend}</b> + ${S.canais} canais</td><td class="n">${S.somaMetas}</td><td class="n"><b>${A.reduce((a,v)=>a+v.falta,0)}</b></td><td></td><td class="n">${S.mes.real??'—'}</td><td class="n">${S.refu.real}</td></tr>
   </tbody></table></div>
   <p class="note">Números conforme os relatórios importados e as correções da gestão. Metas individuais somam ${S.somaMetas} + ${S.canais} dos canais = ${S.somaMetas+S.canais} de ${S.meta}.</p></div>`;
   if(abertoV) modal(abertoV);
+}
+function cardMes(){
+  const m=S.mes;
+  if(m.real==null) return `<div class="banner">Meta do mês (${m.meta}): importe o relatório acumulado do mês na Área da gestão para acompanhar o ritmo.</div>`;
+  const ok=S.total>=m.precisaHoje, bateu=m.falta===0, projOk=m.proj>=m.meta;
+  const cor=bateu?'var(--teal9)':ok?'var(--teal9)':'var(--red)';
+  return `<section class="panel" style="margin:0 0 14px;border:2px solid ${bateu||ok?'var(--teal)':'var(--red)'}"><div class="sh" style="margin:0 0 8px"><div><h2>Meta do mês: ${m.real} de ${m.meta}</h2>
+    <p>${bateu?'Meta do mês batida!':`Faltam <b>${m.falta}</b> em ${S.DU} ${pl(S.DU,'dia útil','dias úteis')} (com hoje) · para fechar, a unidade precisa de <b>${m.precisaHoje} por dia</b>`}</p></div>
+    <div style="font:800 18px Rubik,Arial,sans-serif;color:${cor}">${bateu?'✓ Meta batida':ok?'✓ No caminho hoje':`Hoje: ${S.total} de ${m.precisaHoje} necessárias`}</div></div>
+  <div class="bar" style="height:14px"><i style="width:${pct(m.real,m.meta)}%;background:${bateu||ok?'var(--lime2)':'var(--teal)'}"></i></div>
+  <div class="row3" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:10px">
+    <div><b>${P(m.real,m.meta)}</b><span>atingido no mês</span></div>
+    <div><b>${m.precisaHoje}</b><span>necessário por dia útil</span></div>
+    <div><b>${S.total}</b><span>feitas hoje</span></div>
+    <div><b>${m.ritmo?m.ritmo.toFixed(1).replace('.',','):'—'}</b><span>ritmo médio até ontem (por dia útil)</span></div>
+    <div><b style="color:${projOk?'var(--teal9)':'var(--red)'}">${m.proj||'—'}</b><span>projeção de fechamento no ritmo atual</span></div></div>
+  ${!bateu&&!projOk&&m.ritmo?`<p class="note" style="color:var(--red);font-weight:700">No ritmo atual, fechamos em ~${m.proj}. Para chegar a ${m.meta}, precisamos subir de ${m.ritmo.toFixed(1).replace('.',',')} para ${m.precisaHoje} por dia.</p>`:''}</section>`;
 }
 function meu(){
   if(!SES||ehG()) return '';
@@ -271,6 +296,7 @@ function meu(){
     <div><b>${v.hoje}</b><span>vendas hoje</span></div><div><b>${v.meta_hoje}</b><span>minha meta de hoje</span></div>
     <div><b style="color:${v.falta?'var(--red)':'var(--teal9)'}">${v.falta||'✓'}</b><span>${v.falta?'faltam hoje':'meta batida'}</span></div>
     <div><b>${v.q2}/${v.mq2}</b><span>quinzena</span></div>
+    ${v.mes_v!=null?`<div><b>${v.mes_v}</b><span>Cartão de TODOS no mês</span></div>`:''}
     <div><b style="color:var(--refu)">${v.refu_mes}</b><span>Refuturiza no mês · parte ${S.refu.cota}</span></div>
     <div><b style="color:var(--tim)">${S.tim.cota}</b><span>minha parte TIM</span></div></div>
   <div class="bar" style="margin-top:10px"><i style="width:${pct(v.hoje,v.meta_hoje)}%;background:${v.cor}"></i></div></section>`;
@@ -375,6 +401,8 @@ function gConf(){
 }
 function gRes(){
   return `<div class="gg"><label class="fl">Meta da unidade (dia)<input type="number" min="0" id="g_meta" value="${S.meta}"></label>
+      <label class="fl">Meta do mês (unidade)<input type="number" min="0" id="g_mm" value="${S.mes.meta}"></label>
+      <label class="fl">Vendas do mês até ontem (unidade)<input type="number" min="0" id="g_ma" value="${S.mes.ant??''}"></label>
       <label class="fl" style="grid-column:span 2">Dias úteis do mês <small>separados por vírgula</small><input type="text" id="g_du" value="${diasUteis().join(', ')}"></label></div>
     <h4>Cartão de TODOS · vendas de hoje</h4>
     <div class="gg">${S.V.map((v,i)=>`<label class="fl">${esc(v.nome)} <small>vendas hoje · quinzena ${v.q2}/${v.mq2}</small><input type="number" min="0" id="g_v${i}" value="${v.hoje}" ${v.ferias?'disabled':''}><small>quinzena acumulada (até ontem)</small><input type="number" min="0" id="g_a${i}" value="${v.q2}"><small>meta da quinzena</small><input type="number" min="0" id="g_q${i}" value="${v.mq2}"><small>Refuturiza no mês</small><input type="number" min="0" id="g_r${i}" value="${v.refu_mes}"><span class="sv"><input type="checkbox" id="g_f${i}" ${v.ferias?'checked':''}> de férias</span></label>`).join('')}
@@ -388,10 +416,10 @@ function gRes(){
     <p class="note">Os campos trazem os números atuais. Ao salvar, eles passam a valer para todos e entram no histórico do dia.</p>`;
 }
 function gImp(){
-  let out=`<p class="note" style="margin-top:0">Envie o <b>relatório de filiação por vendedor</b> (do dia) ou o <b>relatório de vendas do Refuturiza</b> (.xlsx). O painel mostra a comparação com os números atuais antes de aplicar. Outros tipos de arquivo são recusados.</p>
+  let out=`<p class="note" style="margin-top:0">Envie o <b>relatório de filiados do mês</b> (Data Filiação / Promotor de Vendas), o <b>relatório de filiação por vendedor</b> ou o <b>relatório de vendas do Refuturiza</b> (.xlsx). O painel mostra a comparação com os números atuais antes de aplicar. Outros tipos de arquivo são recusados.</p>
   <input type="file" id="g_file" accept=".xlsx,.xls" style="font-size:16px;margin:6px 0 10px"><div class="msg" id="i_msg"></div>`;
   if(IMP){
-    out+=`<h4>${IMP.tipo==='cdt'?`Filiação (hoje) · ${esc(IMP.rot)}`:`Refuturiza · mês, dados até ${esc(IMP.rot)}`}</h4>
+    out+=`<h4>${IMP.tipo==='cdt'?`${IMP.fmt==='export'?'Base de filiados':'Filiação'} · ${esc(IMP.rot)}`:`Refuturiza · mês, dados até ${esc(IMP.rot)}`}</h4>
     <div style="overflow-x:auto"><table><thead><tr><th>Vendedor</th><th class="n">Relatório</th><th class="n">Painel agora</th><th class="n">Diferença</th>${IMP.tipo==='cdt'?'<th class="n">Quinzena (relatório)</th><th class="n">Quinzena (painel)</th>':''}</tr></thead><tbody>
     ${IMP.linhas.map(r=>`<tr><td><b>${esc(r.n)}</b></td><td class="n">${r.rel}</td><td class="n">${r.pai}</td><td class="n" style="font-weight:800;color:${r.rel-r.pai?'var(--red)':'var(--teal9)'}">${r.rel-r.pai>0?'+':''}${r.rel-r.pai||'✓'}</td>${IMP.tipo==='cdt'?`<td class="n">${r.qr}</td><td class="n">${r.qp}</td>`:''}</tr>`).join('')}
     <tr><td><b>Total</b></td><td class="n"><b>${IMP.totRel}</b></td><td class="n"><b>${IMP.totPai}</b></td><td class="n"><b>${IMP.totRel-IMP.totPai>0?'+':''}${IMP.totRel-IMP.totPai}</b></td></tr></tbody></table></div>
@@ -411,9 +439,9 @@ async function salvarBase(nb,msgId,okTxt){
 }
 function salvarGestao(){
   const nb=JSON.parse(JSON.stringify(BASE)), hoje=new Date();
-  nb.data=hoje.toLocaleDateString('pt-BR'); nb.ms=nb.ms_cdt=nb.ms_tim=nb.ms_refu=gSnap; nb.meta_unid_dia=num('g_meta');
+  nb.data=hoje.toLocaleDateString('pt-BR'); nb.ms=nb.ms_cdt=nb.ms_tim=nb.ms_refu=gSnap; nb.meta_unid_dia=num('g_meta'); nb.meta_mes=num('g_mm')||700; if($('#g_ma').value!=='') nb.mes_ate_ontem=num('g_ma');
   const du=String($('#g_du').value).split(/[^0-9]+/).map(Number).filter(n=>n>=1&&n<=31); if(du.length){nb.du_list=[...new Set(du)].sort((a,b)=>a-b); nb.du_mes=S.hoje.slice(0,7)}
-  nb.vendedores=nb.vendedores.map((v,i)=>{const e=S.V[i],h=num('g_v'+i);return {...v,hoje:h,q2:num('g_a'+i),mq2:num('g_q'+i),refu_mes:num('g_r'+i),ferias:$('#g_f'+i).checked,vendas:h===e.hoje?e.vendas:[]}});
+  nb.vendedores=nb.vendedores.map((v,i)=>{const e=S.V[i],h=num('g_v'+i);return {...v,hoje:h,mes_ant:e.mes_v==null?v.mes_ant:e.mes_v-e.hoje,q2:num('g_a'+i),mq2:num('g_q'+i),refu_mes:num('g_r'+i),ferias:$('#g_f'+i).checked,vendas:h===e.hoje?e.vendas:[]}});
   nb.canais=Object.fromEntries(Object.keys(S.canaisObj).map((k,i)=>[k,num('g_c'+i)]));
   nb.tim={...nb.tim,real:num('g_tim'),meta:num('g_timm')}; nb.refu={...nb.refu,real:num('g_refu'),meta:num('g_refum')};
   salvarBase(nb,'g_msg','Salvo! Todos já veem os novos números.');
@@ -459,16 +487,32 @@ async function importar(file){
       const ok=rows.filter(r=>{const d=col(r,'DATA');return d instanceof Date&&d.getFullYear()===y&&d.getMonth()+1===mo});
       if(!ok.length) throw new Error('o relatório não tem vendas do mês atual');
       if(ok.some(r=>isoOf(col(r,'DATA').getTime())>S.hoje)) throw new Error('o relatório tem datas depois de hoje');
-      let ate=0, multi=false; const por={}, q2por={}, mesPor={}, canais={}, vendas={}, fora={};
+      let ate=0, multi=false, ant=0; const por={}, q2por={}, mesPor={}, antPor={}, canais={}, vendas={}, fora={};
       for(const r of ok){const dt=col(r,'DATA'), iso=isoOf(dt.getTime()); ate=Math.max(ate,brt(dt)); const n=quem(col(r,'VENDEDOR')), hoje=iso===S.hoje;
-        if(!hoje) multi=true;
+        if(!hoje){ multi=true; ant++; if(n) antPor[n]=(antPor[n]||0)+1 }
         if(n){ mesPor[n]=(mesPor[n]||0)+1; if(hoje){por[n]=(por[n]||0)+1;(vendas[n]=vendas[n]||[]).push({h:`${pad(dt.getHours())}:${pad(dt.getMinutes())}`,tipo:/REFILI/.test(norm(col(r,'PROSPECCAO')))?'Refiliação':'Filiação',pg:String(col(r,'NOME')||'')})} else if(qz(iso)===qz(S.hoje)) q2por[n]=(q2por[n]||0)+1 }
         else if(hoje){const c=String(col(r,'VENDEDOR')||'Outros').trim();canais[c]=(canais[c]||0)+1;if(!CANAIS.includes(norm(c)))fora[c]=1}}
       const linhas=S.V.filter(v=>!v.ferias||por[v.nome]||q2por[v.nome]).map(v=>({n:v.nome,rel:por[v.nome]||0,pai:v.hoje,qr:multi?(q2por[v.nome]||0):v.q2,qp:v.q2}));
       const at=new Date(ate-3*3600e3), dias=[...new Set(ok.map(r=>isoOf(col(r,'DATA').getTime())))].sort();
-      IMP={tipo:'cdt',multi,rot:`${dias.length>1?dias[0].split('-').reverse().join('/')+' a ':''}${pad(at.getUTCDate())}/${pad(at.getUTCMonth()+1)} até ${pad(at.getUTCHours())}:${pad(at.getUTCMinutes())} (Brasília)`,linhas,ate,por,q2por,mesPor,canais,vendas,
+      IMP={tipo:'cdt',multi,ant,antPor,rot:`${dias.length>1?dias[0].split('-').reverse().join('/')+' a ':''}${pad(at.getUTCDate())}/${pad(at.getUTCMonth()+1)} até ${pad(at.getUTCHours())}:${pad(at.getUTCMinutes())} (Brasília)`,linhas,ate,por,q2por,mesPor,canais,vendas,
         totRel:Object.values(por).reduce((a,b)=>a+b,0)+Object.values(canais).reduce((a,b)=>a+b,0),totPai:S.total,
         extra:`Hoje nos canais: ${Object.entries(canais).map(([k,n])=>k+' '+n).join(' · ')||'nenhum'}.${Object.keys(fora).length?' Nomes fora da lista de vendedores (contados como canal): '+Object.keys(fora).join(', ')+'.':''}${multi?' Relatório com vários dias: a quinzena acumulada será substituída pela do relatório.':' Relatório só de hoje: a quinzena acumulada é mantida.'}`};
+    } else if(rows.length&&Object.keys(rows[0]).some(k=>norm(k)==='PROMOTOR DE VENDAS')&&Object.keys(rows[0]).some(k=>norm(k)==='DATA FILIACAO')){
+      const [y,mo]=S.hoje.split('-').map(Number), qz=iso=>iso.slice(0,7)+(+iso.slice(8)>=16?'b':'a');
+      const st=r=>norm(col(r,'STATUS FILIADO'));
+      const todas=rows.filter(r=>{const d=col(r,'DATA FILIACAO');return d instanceof Date&&d.getFullYear()===y&&d.getMonth()+1===mo});
+      const ok=todas.filter(r=>!/CANCEL|DESFILI|INATIV/.test(st(r))), excl=todas.length-ok.length;
+      if(!ok.length) throw new Error('o relatório não tem filiações do mês atual');
+      if(ok.some(r=>isoOf(col(r,'DATA FILIACAO').getTime())>S.hoje)) throw new Error('o relatório tem datas depois de hoje');
+      const por={}, q2por={}, antPor={}, canais={}; let ant=0, ult='';
+      for(const r of ok){const iso=isoOf(col(r,'DATA FILIACAO').getTime()), hoje=iso===S.hoje, n=quem(col(r,'PROMOTOR DE VENDAS')); if(iso>ult)ult=iso;
+        if(!hoje) ant++;
+        if(n){ if(hoje) por[n]=(por[n]||0)+1; else { antPor[n]=(antPor[n]||0)+1; if(qz(iso)===qz(S.hoje)) q2por[n]=(q2por[n]||0)+1 } }
+        else if(hoje){const c=String(col(r,'PROMOTOR DE VENDAS')||'Outros').trim();canais[c]=(canais[c]||0)+1}}
+      const linhas=S.V.filter(v=>!v.ferias||por[v.nome]||q2por[v.nome]).map(v=>({n:v.nome,rel:por[v.nome]||0,pai:v.hoje,qr:q2por[v.nome]||0,qp:v.q2}));
+      IMP={tipo:'cdt',fmt:'export',multi:true,rot:`filiados de 01/${pad(mo)} a ${ult.split('-').reverse().join('/')}`,linhas,ate:Date.now(),por,q2por,antPor,ant,canais,vendas:{},
+        totRel:Object.values(por).reduce((a,b)=>a+b,0)+Object.values(canais).reduce((a,b)=>a+b,0),totPai:S.total,
+        extra:`Mês até ontem (todos os canais): ${ant} filiações${excl?` · ${excl} canceladas/inativas fora da conta`:''}. Meta do mês: ${S.mes.meta}, faltam ${Math.max(0,S.mes.meta-ant-(Object.values(por).reduce((a,b)=>a+b,0)+Object.values(canais).reduce((a,b)=>a+b,0)))}.${ult<S.hoje?' O relatório vai até '+ult.split('-').reverse().join('/')+': as vendas de hoje ficam em 0 até a próxima importação.':''}`};
     } else if(rows.length&&Object.keys(rows[0]).some(k=>norm(k)==='NOME VENDEDOR')){
       const [y,mo]=S.hoje.split('-').map(Number); const por={}; let total=0,last=0;
       for(const r of rows){const dt=col(r,'DATA CRIACAO ASSINATURA');if(!(dt instanceof Date)||dt.getFullYear()!==y||dt.getMonth()+1!==mo)continue;
@@ -483,7 +527,7 @@ function aplicarImp(){
   if(!IMP) return; const nb=JSON.parse(JSON.stringify(BASE)), I=IMP;
   if(I.tipo==='cdt'){
     nb.data=new Date().toLocaleDateString('pt-BR'); nb.ms_cdt=I.ate; nb.ms_tim=cut('tim'); nb.ms_refu=cut('refu');
-    nb.vendedores=nb.vendedores.map((v,i)=>({...v,hoje:I.por[v.nome]||0,q2:I.multi?(I.q2por[v.nome]||0):S.V[i].q2,mes_cdt:I.multi?(I.mesPor[v.nome]||0):v.mes_cdt,refu_mes:S.V[i].refu_mes,vendas:I.vendas[v.nome]||[]}));
+    nb.vendedores=nb.vendedores.map((v,i)=>({...v,hoje:I.por[v.nome]||0,q2:I.multi?(I.q2por[v.nome]||0):S.V[i].q2,mes_ant:I.multi?(I.antPor[v.nome]||0):(S.V[i].mes_v==null?v.mes_ant:S.V[i].mes_v-S.V[i].hoje),refu_mes:S.V[i].refu_mes,vendas:I.vendas[v.nome]||[]})); if(I.multi) nb.mes_ate_ontem=I.ant; else if(S.mes.ant!=null) nb.mes_ate_ontem=S.mes.ant;
     nb.canais=I.canais; nb.refu.real=S.refu.real; nb.tim.real=S.tim.real; nb.refu.meta=S.refu.meta; nb.tim.meta=S.tim.meta;
   } else {
     nb.ms_refu=I.ate; nb.ms_cdt=cut('cdt'); nb.ms_tim=cut('tim');
@@ -507,7 +551,7 @@ async function validarTodos(){
 function aplicar(j){ if(j.base&&j.base.vendedores) BASE=j.base; LANC=j.lanc||[]; online=true; render() }
 function snapshot(){
   derive();
-  return {data:S.hoje, unidade:{total:S.total,meta:S.meta,canais:S.canais,tim:S.tim.real,tim_meta:S.tim.meta,refu:S.refu.real,refu_meta:S.refu.meta},
+  return {data:S.hoje, unidade:{total:S.total,meta:S.meta,mes:S.mes.real,mes_meta:S.mes.meta,canais:S.canais,tim:S.tim.real,tim_meta:S.tim.meta,refu:S.refu.real,refu_meta:S.refu.meta},
     vendedores:S.V.filter(v=>!v.ferias||v.hoje).map(v=>({v:v.nome,cdt:v.hoje,meta:v.meta_hoje,tim:'',refu:v.refu_mes,pos:S.rank.indexOf(v.nome)+1,quinzena:v.q2,meta_quinzena:v.mq2}))};
 }
 function guardarHistorico(){ if(!API_URL||!SES) return; fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({acao:'historico',v:SES.v,pin:SES.pin,snap:snapshot()})}).catch(()=>{}) }
